@@ -1,3 +1,12 @@
+enum Ops {
+	add = '+',
+	subtract = '-',
+	multiply = '*',
+	divide = '/',
+	power = '**',
+	start = 'start'
+}
+
 enum Chars {
 	num = "num",
 	op = "op"
@@ -8,11 +17,11 @@ type CharsList = {
 	value: string
 } | {
 	type: Chars.op
-	value: string
+	value: Ops
 } | CharsList[]
 
 const nums = '0123456789'
-const ops = '+-*/^'
+const ops = Object.values(Ops)
 
 const infix = (input: string) => {
 	const charsList: CharsList[] = []
@@ -21,8 +30,8 @@ const infix = (input: string) => {
 
 	for (const char of input) {
 		const ref = getReferenceDepth(charsList, brackCount)
-		if (ops.includes(char)) {
-			ref.push({ type: Chars.op, value: char })
+		if (ops.includes(char as Ops)) {
+			ref.push({ type: Chars.op, value: char as Ops })
 			lastType = Chars.op
 		}
 		if (nums.includes(char)) {
@@ -67,22 +76,20 @@ const resolveCharList = (list: CharsList[]): number => {
 		}
 
 		return acc
-	}, [] as [string, number][])
+	}, [] as [Ops, number][])
 
-	for (const set of ops) {
-		res = operate(res, set[1], set[0])
-	}
+	for (const set of ops) res = operate(res, set[1], set[0])
 
 	return res
 }
 
-const operate = (num1: number, num2: number, op: string) => {
-	if (op === '+') return num1 + num2
-	if (op === '-') return num1 - num2
-	if (op === '*') return num1 * num2
-	if (op === '/') return num1 / num2
-	if (op === '^') return num1 ** num2
-	if (op === 'start') return num2
+const operate = (num1: number, num2: number, op: Ops) => {
+	if (op === Ops.add) return num1 + num2
+	if (op === Ops.subtract) return num1 - num2
+	if (op === Ops.multiply) return num1 * num2
+	if (op === Ops.divide) return num1 / num2
+	if (op === Ops.power) return num1 ** num2
+	if (op === Ops.start) return num2
 	return num1
 }
 
